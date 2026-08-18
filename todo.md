@@ -30,3 +30,11 @@
 - [x] Add click-to-pause/play behavior with accessible labels and silent-playback status.
 - [x] Verify the live page and mobile presentation.
 - [ ] Save and deliver a new checkpoint.
+
+## Non-identifying Medical Visuals
+
+- [x] Select an abstract neurology visual for the hero from an appropriate online source.
+- [x] Select a non-identifying clinical/editorial visual for the A BROADER VIEW section.
+- [x] Save source URLs and usage notes for the selected assets.
+- [x] Download/upload the assets and replace only the two requested image areas.
+- [x] Verify the design on desktop and mobile, then save a new checkpoint.

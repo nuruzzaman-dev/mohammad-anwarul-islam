@@ -38,3 +38,10 @@
 - [x] Save source URLs and usage notes for the selected assets.
 - [x] Download/upload the assets and replace only the two requested image areas.
 - [x] Verify the design on desktop and mobile, then save a new checkpoint.
+
+## Randomized Hero Video Revision
+
+- [x] Retrieve and upload the provided Pixabay hero video.
+- [x] Replace only the hero neural image with a non-interactive muted video.
+- [x] Add autoplay, loop and randomized playback start on each loop.
+- [x] Verify desktop and mobile hero presentation and save a new checkpoint.

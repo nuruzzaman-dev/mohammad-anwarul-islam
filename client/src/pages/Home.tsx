@@ -42,6 +42,7 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
   const introVideo = useRef<HTMLVideoElement>(null);
+  const heroVideo = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -82,6 +83,14 @@ export default function Home() {
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
+
+  const randomizeHeroVideo = () => {
+    const video = heroVideo.current;
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+    video.muted = true;
+    video.currentTime = Math.random() * Math.max(0, video.duration - 0.45);
+    video.play().catch(() => undefined);
+  };
 
   const toggleIntroVideo = () => {
     const video = introVideo.current;
@@ -147,7 +156,7 @@ export default function Home() {
               </div>
             </div>
             <div className="hero-visual">
-              <div className="portrait-wrap"><img className="hero-portrait" src="/manus-storage/neural-connections_fa45c6aa.jpg" alt="Abstract neural connections and neurological network" /></div>
+              <div className="portrait-wrap"><video ref={heroVideo} className="hero-portrait hero-video" autoPlay muted playsInline preload="metadata" onLoadedMetadata={randomizeHeroVideo} onEnded={randomizeHeroVideo} aria-hidden="true" tabIndex={-1}><source src="/manus-storage/hero-neurology_b77e9575.mp4" type="video/mp4" /></video></div>
               <img className="neural-art" src="/manus-storage/neural-linework_9f0bbf39.png" alt="" aria-hidden="true" />
               <div className="image-note">01 <span>Care begins<br />with context.</span></div>
             </div>

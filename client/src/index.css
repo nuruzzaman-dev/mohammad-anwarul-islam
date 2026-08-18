@@ -93,3 +93,6 @@
   .intro-video-frame .video-overlay { padding: 19px; font-size: 8px; }
   .intro-video-frame .video-overlay button { width: 58px; height: 58px; }
 }
+
+/* Hero video: visual-only, silent and non-interactive by design. */
+.hero-video { pointer-events: none; user-select: none; }

@@ -74,3 +74,12 @@
   .expertise-mobile-progress i { background: #bfcbc1; }
   .expertise-mobile-progress i b { background: var(--teal); }
 }
+
+/* Synchronized track states: the item nearest the viewport center becomes the visual anchor. */
+@media (max-width: 900px) {
+  .credential { transition: opacity .25s var(--ease-out), transform .25s var(--ease-out); opacity: .62; }
+  .credential.is-active { opacity: 1; transform: translateY(-2px); }
+  .expertise-index button { transition: color .25s var(--ease-out), transform .25s var(--ease-out), opacity .25s; opacity: .62; }
+  .expertise-index button.is-active, .expertise-index button.active { opacity: 1; }
+  .mobile-scroll-cue em, .expertise-mobile-progress span { min-width: 42px; text-align: right; }
+}

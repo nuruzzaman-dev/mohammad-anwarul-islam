@@ -2,7 +2,7 @@
  * Literary Practice direction: asymmetric medical editorialism, warm ivory field,
  * charcoal type, River Teal accents, archival linework, and restrained motion.
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type UIEvent } from "react";
 import { ArrowDownRight, ArrowUpRight, ChevronDown, Menu, Play, Plus, X } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -37,6 +37,7 @@ export default function Home() {
   const root = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeExpertise, setActiveExpertise] = useState(0);
+  const [activeCredential, setActiveCredential] = useState(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
@@ -61,8 +62,8 @@ export default function Home() {
       mobile.add("(max-width: 900px) and (prefers-reduced-motion: no-preference)", () => {
         gsap.from(".credential", { x: 26, opacity: 0, duration: .8, stagger: .12, ease: "power3.out", scrollTrigger: { trigger: ".credential-strip", start: "top 85%", once: true } });
         gsap.from(".expertise-index button", { x: 24, opacity: 0, duration: .7, stagger: .08, ease: "power3.out", scrollTrigger: { trigger: ".expertise", start: "top 78%", once: true } });
-        ScrollTrigger.create({ trigger: ".credential-strip", start: "top 82%", end: "bottom 35%", onUpdate: (self) => gsap.set(".mobile-scroll-cue i b", { scaleX: Math.max(.12, self.progress) }) });
-        ScrollTrigger.create({ trigger: ".expertise", start: "top 78%", end: "bottom 25%", onUpdate: (self) => gsap.set(".expertise-mobile-progress i b", { scaleX: Math.max(.12, self.progress) }) });
+        ScrollTrigger.create({ trigger: ".credential-strip", start: "top 82%", end: "bottom 35%", onUpdate: (self) => gsap.set(".mobile-scroll-cue i b", { opacity: .35 + self.progress * .65 }) });
+        ScrollTrigger.create({ trigger: ".expertise", start: "top 78%", end: "bottom 25%", onUpdate: (self) => gsap.set(".expertise-mobile-progress i b", { opacity: .35 + self.progress * .65 }) });
       });
     }, root);
     return () => ctx.revert();
@@ -79,6 +80,23 @@ export default function Home() {
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
+
+  const syncHorizontal = (event: UIEvent<HTMLDivElement>, selector: string, setActive?: (index: number) => void) => {
+    const track = event.currentTarget;
+    const max = Math.max(1, track.scrollWidth - track.clientWidth);
+    const progress = Math.min(1, Math.max(0, track.scrollLeft / max));
+    const section = track.closest("section");
+    const fill = section?.querySelector(selector) as HTMLElement | null;
+    if (fill) gsap.to(fill, { scaleX: Math.max(.08, progress), duration: .18, overwrite: true, ease: "power2.out" });
+    const children = Array.from(track.children) as HTMLElement[];
+    const center = track.scrollLeft + track.clientWidth / 2;
+    const index = children.reduce((closest, child, i) => {
+      const childCenter = child.offsetLeft + child.offsetWidth / 2;
+      return Math.abs(childCenter - center) < Math.abs(children[closest].offsetLeft + children[closest].offsetWidth / 2 - center) ? i : closest;
+    }, 0);
+    setActive?.(index);
+    children.forEach((child, i) => child.classList.toggle("is-active", i === index));
+  };
 
   const scrollTo = (id: string) => {
     document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
@@ -123,13 +141,13 @@ export default function Home() {
           <div className="hero-bottom container"><span>SCROLL TO EXPLORE</span><ArrowDownRight size={17} /></div>
         </section>
 
-        <section className="credential-strip"><div className="credential-inner container">{[["MBBS", "Mymensingh Medical College"], ["BCS (Health)", "Bangladesh Health Cadre"], ["FCPS", "Postgraduate Medicine"], ["MD", "Neurology Specialization"], ["BMDC", "Reg. A-61657"]].map(([a,b]) => <div className="credential" key={a}><strong>{a}</strong><span>{b}</span></div>)}</div><div className="mobile-scroll-cue container"><span>SWIPE TO EXPLORE</span><i><b /></i><em>01 — 05</em></div></section>
+        <section className="credential-strip"><div className="credential-inner container" onScroll={(event) => syncHorizontal(event, ".mobile-scroll-cue i b", setActiveCredential)}>{[["MBBS", "Mymensingh Medical College"], ["BCS (Health)", "Bangladesh Health Cadre"], ["FCPS", "Postgraduate Medicine"], ["MD", "Neurology Specialization"], ["BMDC", "Reg. A-61657"]].map(([a,b], i) => <div className={activeCredential === i ? "credential is-active" : "credential"} key={a}><strong>{a}</strong><span>{b}</span></div>)}</div><div className="mobile-scroll-cue container"><span>SWIPE TO EXPLORE</span><i><b /></i><em>01 — 05</em></div></section>
 
         <section id="about" className="story section-pad"><div className="container story-grid"><div className="story-heading reveal"><SectionLabel number="01">THE FOUNDATION</SectionLabel><h2>Medicine gave him<br /><i>the foundation.</i><br />Neurology became<br /><i>his focus.</i></h2></div><div className="story-aside reveal"><p className="large-quote">A broader view of neurological care begins with a strong understanding of adult medicine.</p><div className="rule" /><p>Dr. Mohammad Anwarul Islam combines postgraduate qualifications in Medicine and Neurology with an academic role in the Department of Neurology at Jamalpur Medical College & Hospital.</p><button className="text-link" onClick={() => scrollTo("#journey")}>Trace the professional journey <ArrowDownRight size={16} /></button></div></div></section>
 
         <section className="about-band section-pad"><div className="container about-grid"><div className="about-photo reveal"><img src="/manus-storage/consultation-scene_7a934f7c.png" alt="A thoughtful physician consultation" /><span className="image-caption">Clinical practice, approached with attention.</span></div><div className="about-copy reveal"><SectionLabel number="02">A BROADER VIEW</SectionLabel><h2>A physician with a broader view of neurological care.</h2><p>His professional background connects adult medicine with specialized neurological training, allowing each consultation to begin with the wider clinical picture.</p><div className="principle"><span>MEDICINE</span><b>+</b><span>NEUROLOGY</span><b>+</b><span>ACADEMIC PRACTICE</span></div></div></div></section>
 
-        <section id="expertise" className="expertise section-pad"><div className="container"><div className="expertise-heading reveal"><SectionLabel number="03">SPECIALIST FOCUS</SectionLabel><h2>Neurology, approached<br /><i>with clinical depth.</i></h2><p>Consultation and assessment for a broad range of neurological symptoms and conditions.</p></div><div className="expertise-workspace"><div className="expertise-index-wrap"><div className="expertise-index">{expertise.map(([n, title], i) => <button key={n} className={activeExpertise === i ? "active" : ""} onClick={() => setActiveExpertise(i)}><span>{n}</span>{title}</button>)}</div><div className="expertise-mobile-progress"><i><b /></i><span>01 — 07</span></div></div><div className="expertise-detail"><div className="detail-count">{expertise[activeExpertise][0]} <span>/ 07</span></div><h3>{expertise[activeExpertise][1]}</h3><p>{expertise[activeExpertise][2]}</p><div className="detail-line"><span style={{ width: `${((activeExpertise + 1) / expertise.length) * 100}%` }} /></div><div className="detail-nav"><button onClick={() => setActiveExpertise(Math.max(0, activeExpertise - 1))}>Previous</button><button onClick={() => setActiveExpertise((activeExpertise + 1) % expertise.length)}>Next <ArrowUpRight size={15} /></button></div></div></div></div></section>
+        <section id="expertise" className="expertise section-pad"><div className="container"><div className="expertise-heading reveal"><SectionLabel number="03">SPECIALIST FOCUS</SectionLabel><h2>Neurology, approached<br /><i>with clinical depth.</i></h2><p>Consultation and assessment for a broad range of neurological symptoms and conditions.</p></div><div className="expertise-workspace"><div className="expertise-index-wrap"><div className="expertise-index" onScroll={(event) => syncHorizontal(event, ".expertise-mobile-progress i b", setActiveExpertise)}>{expertise.map(([n, title], i) => <button key={n} className={activeExpertise === i ? "active" : ""} onClick={() => setActiveExpertise(i)}><span>{n}</span>{title}</button>)}</div><div className="expertise-mobile-progress"><i><b /></i><span>01 — 07</span></div></div><div className="expertise-detail"><div className="detail-count">{expertise[activeExpertise][0]} <span>/ 07</span></div><h3>{expertise[activeExpertise][1]}</h3><p>{expertise[activeExpertise][2]}</p><div className="detail-line"><span style={{ width: `${((activeExpertise + 1) / expertise.length) * 100}%` }} /></div><div className="detail-nav"><button onClick={() => setActiveExpertise(Math.max(0, activeExpertise - 1))}>Previous</button><button onClick={() => setActiveExpertise((activeExpertise + 1) % expertise.length)}>Next <ArrowUpRight size={15} /></button></div></div></div></div></section>
 
         <section className="medicine-band section-pad"><div className="container medicine-grid"><div className="medicine-intro reveal"><SectionLabel number="04">THE WIDER PICTURE</SectionLabel><h2>Beyond neurology,<br /><i>grounded in medicine.</i></h2><p className="medicine-lead">Neurology is the specialist focus. Medicine is the wider adult-care foundation that helps place symptoms in context.</p><div className="medicine-contrast"><span><b>NEUROLOGY</b><small>Specialist focus</small></span><i>+</i><span><b>MEDICINE</b><small>Broader adult foundation</small></span></div></div><div className="medicine-copy reveal"><p>Medicine training supports assessment of common adult medical concerns, overlapping symptoms and conditions that may need a careful first review before specialist direction.</p><div className="medicine-list">{[["01", "General adult medicine"], ["02", "Fever & infections"], ["03", "Weakness & fatigue"], ["04", "Hypertension-related problems"], ["05", "Diabetes-related problems"], ["06", "Chronic or overlapping conditions"]].map(([n,item]) => <span key={item}><b>{n}</b>{item}<ArrowUpRight size={14} /></span>)}</div><p className="medicine-note">This section describes the broader medical foundation of the practice. It does not imply certification in unrelated subspecialties.</p></div></div></section>
 

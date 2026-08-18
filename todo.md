@@ -14,3 +14,11 @@
 - [x] Add reduced-motion and cleanup handling for the new GSAP contexts.
 - [x] Run type checking and production build.
 - [x] Capture mobile screenshots and save a new checkpoint.
+
+## Synchronized Progress Revision
+
+- [x] Bind credential content movement and active counter to the credential progress timeline.
+- [x] Bind Neurology item movement, active state and counter to the Neurology progress timeline.
+- [x] Preserve native touch interaction and reduced-motion behavior.
+- [x] Run build and capture mobile verification screenshots.
+- [ ] Save and deliver a new checkpoint.

@@ -22,3 +22,11 @@
 - [x] Preserve native touch interaction and reduced-motion behavior.
 - [x] Run build and capture mobile verification screenshots.
 - [ ] Save and deliver a new checkpoint.
+
+## Introduction Video Revision
+
+- [x] Download and upload the provided Pexels MP4 as a managed web asset.
+- [x] Embed the video in section 08 with autoplay, loop, playsInline and fully muted playback.
+- [x] Add click-to-pause/play behavior with accessible labels and silent-playback status.
+- [x] Verify the live page and mobile presentation.
+- [ ] Save and deliver a new checkpoint.

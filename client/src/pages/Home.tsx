@@ -40,6 +40,8 @@ export default function Home() {
   const [activeCredential, setActiveCredential] = useState(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const introVideo = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -80,6 +82,18 @@ export default function Home() {
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
+
+  const toggleIntroVideo = () => {
+    const video = introVideo.current;
+    if (!video) return;
+    video.muted = true;
+    if (video.paused) {
+      video.play().then(() => setIsVideoPlaying(true)).catch(() => setIsVideoPlaying(false));
+    } else {
+      video.pause();
+      setIsVideoPlaying(false);
+    }
+  };
 
   const syncHorizontal = (event: UIEvent<HTMLDivElement>, selector: string, setActive?: (index: number) => void) => {
     const track = event.currentTarget;
@@ -157,7 +171,7 @@ export default function Home() {
 
         <section className="academic section-pad"><div className="container academic-grid"><div className="academic-image reveal"><img src="/manus-storage/academic-detail_11c894f3.png" alt="Academic medicine and clinical study" /></div><div className="academic-copy reveal"><SectionLabel number="07">ACADEMIC MEDICINE</SectionLabel><h2>Academic medicine meets clinical practice.</h2><p>His current role connects neurological clinical practice with medical education and professional development.</p><div className="academic-role"><strong>Assistant Professor</strong><span>Department of Neurology</span><span>Jamalpur Medical College & Hospital</span></div></div></div></section>
 
-        <section className="video-section section-pad"><div className="container"><div className="video-heading reveal"><SectionLabel number="08">AN INTRODUCTION</SectionLabel><h2>Meet Dr. Mohammad<br /><i>Anwarul Islam.</i></h2><p>An introduction to his clinical background, neurological practice and approach to patient care.</p></div><div className="video-frame"><img src="/manus-storage/consultation-scene_7a934f7c.png" alt="Physician consultation environment" /><div className="video-overlay"><span>Video introduction</span><button onClick={() => toast.info("Video introduction placeholder — add the doctor’s approved video when available.")} aria-label="Play introduction"><Play size={20} fill="currentColor" /></button><span>02:40</span></div></div></div></section>
+        <section className="video-section section-pad"><div className="container"><div className="video-heading reveal"><SectionLabel number="08">AN INTRODUCTION</SectionLabel><h2>Meet Dr. Mohammad<br /><i>Anwarul Islam.</i></h2><p>An introduction to his clinical background, neurological practice and approach to patient care.</p></div><div className="video-frame intro-video-frame"><video ref={introVideo} autoPlay muted loop playsInline preload="metadata" onLoadedMetadata={() => { const video = introVideo.current; if (video) { video.muted = true; video.play().then(() => setIsVideoPlaying(true)).catch(() => setIsVideoPlaying(false)); } }} onClick={toggleIntroVideo} aria-label="Silent video introduction — click to pause or play"><source src="/manus-storage/introduction-video_e1a9d5bf.mp4" type="video/mp4" /></video><div className="video-overlay"><span>{isVideoPlaying ? "Playing silently" : "Paused — tap to play"}</span><button onClick={toggleIntroVideo} aria-label={isVideoPlaying ? "Pause introduction video" : "Play introduction video"}>{isVideoPlaying ? <span className="pause-glyph">Ⅱ</span> : <Play size={20} fill="currentColor" />}</button><span>Sound off · loop</span></div></div></div></section>
 
         <section id="chamber" className="chamber section-pad"><div className="container chamber-grid"><div className="chamber-copy reveal"><SectionLabel number="09">THE CHAMBER</SectionLabel><h2>Consultation in<br /><i>Mymensingh.</i></h2><p className="chamber-lead">Popular Diagnostic Center, Mymensingh</p><p>171, Charpara, Medical College Gate,<br />Mymensingh-2200, Bangladesh</p><div className="chamber-details"><div><span>Visiting</span><strong>3:00 PM – 9:00 PM</strong><small>Saturday · Sunday · Tuesday · Wednesday</small></div><div><span>Appointment / Serial</span><a href="tel:+8809666787814">+880 9666-787814</a></div></div><div className="chamber-actions"><a className="button-primary" href="tel:+8809666787814">Call for Serial <ArrowUpRight size={17} /></a><button className="button-quiet" onClick={() => toast.info("Directions require confirmed map coordinates before public use.")}>Get Directions <ArrowUpRight size={16} /></button></div><p className="fine-print">Chamber schedules may change. Please call before visiting to confirm the latest schedule.</p></div><div className="chamber-art reveal"><div className="map-art"><span>MYMENSINGH</span><b>23° 55' N</b><i /><small>POPULAR DIAGNOSTIC CENTER</small></div></div></div></section>
 
